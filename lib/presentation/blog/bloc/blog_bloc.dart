@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:blog_assignment/domain/usecases/blog/get_blog_detail_usecase.dart';
 import 'package:blog_assignment/domain/usecases/blog/get_blogs_usecase.dart';
 import 'package:blog_assignment/domain/usecases/blog/search_blogs_usecase.dart';
@@ -11,7 +13,7 @@ class BlogBloc extends Bloc<BlogBlocEvent, BlogState> {
   final SearchBlogsUseCase searchBlogsUseCase;
 
   int _currentPage = 1;
-  static const int _perPage = 15;
+  static const int _perPage = 10;
 
   BlogBloc({
     required this.getBlogDetailUseCase,
@@ -24,18 +26,20 @@ class BlogBloc extends Bloc<BlogBlocEvent, BlogState> {
   }
 
   Future<void> _onFetchBlogs(FetchBlogs event, Emitter<BlogState> emit) async {
-    emit(state.copyWith(status: BlogStatus.loading));
     _currentPage = 1;
 
     try {
+      emit(state.copyWith(status: BlogStatus.loading));
       final result = await getBlogsUseCase.call(
         param: GetBlogsParams(page: _currentPage, category: event.category),
       );
       result.fold(
         (failure) {
-          state.copyWith(
-            status: BlogStatus.failure,
-            errorMessage: failure.message,
+          emit(
+            state.copyWith(
+              status: BlogStatus.failure,
+              errorMessage: failure.message,
+            ),
           );
         },
         (blogs) {
@@ -59,8 +63,10 @@ class BlogBloc extends Bloc<BlogBlocEvent, BlogState> {
     LoadMoreBlogs event,
     Emitter<BlogState> emit,
   ) async {
-    if (state.hasReachedMax) return;
+    if (state.hasReachedMax || state.status == BlogStatus.isLoadingMore) return;
+
     try {
+      emit(state.copyWith(status: BlogStatus.isLoadingMore));
       _currentPage++;
 
       final result = await getBlogsUseCase.call(
@@ -69,16 +75,24 @@ class BlogBloc extends Bloc<BlogBlocEvent, BlogState> {
 
       result.fold(
         (failure) {
-          emit(state.copyWith(errorMessage: failure.message));
-        },
-        (blogs) {
           emit(
-            blogs.isEmpty
-                ? state.copyWith(hasReachedMax: true)
+            state.copyWith(
+              status: BlogStatus.failure,
+              errorMessage: failure.message,
+            ),
+          );
+        },
+        (newBlogs) {
+          emit(
+            newBlogs.isEmpty
+                ? state.copyWith(
+                    hasReachedMax: true,
+                    status: BlogStatus.success,
+                  )
                 : state.copyWith(
                     status: BlogStatus.success,
-                    blogs: List.of(state.blogs)..addAll(blogs),
-                    hasReachedMax: blogs.length < _perPage,
+                    blogs: List.of(state.blogs)..addAll(newBlogs),
+                    hasReachedMax: newBlogs.length < _perPage,
                   ),
           );
         },
@@ -94,9 +108,11 @@ class BlogBloc extends Bloc<BlogBlocEvent, BlogState> {
     SearchBlogs event,
     Emitter<BlogState> emit,
   ) async {
+    log('_onSearchBlogs');
     _currentPage = 1;
-    emit(state.copyWith(status: BlogStatus.loading));
+    emit(state.copyWith(status: BlogStatus.loading, blogs: []));
     final result = await searchBlogsUseCase.call(param: event.query);
+
     result.fold(
       (failure) {
         emit(
@@ -107,10 +123,12 @@ class BlogBloc extends Bloc<BlogBlocEvent, BlogState> {
         );
       },
       (blogs) {
-        state.copyWith(
-          blogs: blogs,
-          status: BlogStatus.success,
-          hasReachedMax: blogs.length < _perPage,
+        emit(
+          state.copyWith(
+            blogs: blogs,
+            status: BlogStatus.success,
+            hasReachedMax: blogs.length < _perPage,
+          ),
         );
       },
     );

@@ -7,11 +7,13 @@ class BlogState {
   final List<BlogEntity> blogs;
   final bool hasReachedMax;
   final String? errorMessage;
+  final bool isLoading;
   BlogState({
     this.status = BlogStatus.initial,
     this.blogs = const [],
     this.hasReachedMax = false,
     this.errorMessage,
+    this.isLoading = false,
   });
 
   BlogState copyWith({
@@ -25,6 +27,7 @@ class BlogState {
       blogs: blogs ?? this.blogs,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       errorMessage: errorMessage ?? this.errorMessage,
+      isLoading: isLoading,
     );
   }
 }
