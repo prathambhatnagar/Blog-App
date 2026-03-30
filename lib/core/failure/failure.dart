@@ -28,3 +28,9 @@ class NetworkFailure extends Failure {
 class ServerFailure extends Failure {
   const ServerFailure([super.message = "Internal server error."]);
 }
+
+class DataBaseFailure extends Failure {
+  const DataBaseFailure([
+    super.message = "Failed to retrive data from Data base.",
+  ]);
+}

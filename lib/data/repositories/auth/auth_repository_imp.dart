@@ -89,4 +89,18 @@ class AuthRepositoryImp extends AuthRepository {
       return left(ServerFailure());
     }
   }
+
+  @override
+  UserEntity? getCurrentUser() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      return UserEntity(
+        uid: user.uid,
+        email: user.email ?? '',
+        displayName: user.displayName,
+        profileUrl: user.photoURL,
+      );
+    }
+    return null;
+  }
 }

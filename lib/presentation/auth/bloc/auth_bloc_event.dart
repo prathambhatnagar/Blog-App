@@ -12,6 +12,8 @@ class EmailSignUpEvent extends AuthBlocEvent {
   String password;
 }
 
+class AuthCheckRequested extends AuthBlocEvent {}
+
 class GoogleSignUpEvent extends AuthBlocEvent {}
 
 class LogOutEvent extends AuthBlocEvent {}

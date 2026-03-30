@@ -41,7 +41,7 @@ class BlogRemoteDataSourceImpl implements BlogRemoteDataSource {
   Future<List<BlogModel>> searchBlogs(String query) async {
     final response = await dio.get(
       'https://dev.to/api/articles',
-      queryParameters: {'q': query},
+      queryParameters: {'tag': query, 'per_page': 10},
     );
 
     return (response.data as List)
