@@ -1,5 +1,8 @@
 import 'package:blog_assignment/domain/entities/blog/blog_entity.dart';
+import 'package:blog_assignment/presentation/bookmark/bloc/bookmark_bloc.dart';
+import 'package:blog_assignment/presentation/bookmark/bloc/bookmark_event.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class BlogCard extends StatelessWidget {
   const BlogCard({super.key, required this.blogEntity});
@@ -38,7 +41,11 @@ class BlogCard extends StatelessWidget {
                       Icons.bookmark_border,
                       color: Colors.black87,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      context.read<BookmarkBloc>().add(
+                        ToggleBookmark(blogEntity),
+                      );
+                    },
                   ),
                 ),
               ),

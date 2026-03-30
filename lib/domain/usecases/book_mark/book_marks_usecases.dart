@@ -6,7 +6,7 @@ import 'package:dartz/dartz.dart';
 
 class AddBookmarkUseCase extends Usecase<void, BlogEntity> {
   final BookmarkRepository repository;
-  AddBookmarkUseCase(this.repository);
+  AddBookmarkUseCase({required this.repository});
 
   @override
   Future<Either<Failure, void>> call({required BlogEntity param}) =>
@@ -15,7 +15,7 @@ class AddBookmarkUseCase extends Usecase<void, BlogEntity> {
 
 class RemoveBookmarkUseCase extends Usecase<void, int> {
   final BookmarkRepository repository;
-  RemoveBookmarkUseCase(this.repository);
+  RemoveBookmarkUseCase({required this.repository});
   @override
   Future<Either<Failure, void>> call({required int param}) =>
       repository.remove(param);
@@ -23,7 +23,7 @@ class RemoveBookmarkUseCase extends Usecase<void, int> {
 
 class GetBookmarksUseCase extends Usecase<List<BlogEntity>, NoParam> {
   final BookmarkRepository repository;
-  GetBookmarksUseCase(this.repository);
+  GetBookmarksUseCase({required this.repository});
   @override
   Future<Either<Failure, List<BlogEntity>>> call({required NoParam param}) =>
       repository.getAll();

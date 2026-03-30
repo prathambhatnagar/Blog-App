@@ -5,14 +5,18 @@ class ErrorTile extends StatelessWidget {
   final String? error;
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(Icons.error_outline_rounded, size: 50, color: Colors.red),
-        Text(
-          error ?? 'Something Went Wrong',
-          style: TextStyle(color: Colors.red, fontSize: 20),
-        ),
-      ],
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error_outline_rounded, size: 40, color: Colors.red),
+          SizedBox(height: 10),
+          Text(
+            error ?? 'Something Went Wrong',
+            style: TextStyle(color: Colors.red, fontSize: 18),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:blog_assignment/core/usecase/usecase.dart';
+import 'package:blog_assignment/domain/entities/auth/user_entity.dart';
 import 'package:blog_assignment/domain/repositories/auth/auth_repository.dart';
 import 'package:blog_assignment/domain/usecases/auth/email_sign_in_usecase.dart';
 import 'package:blog_assignment/domain/usecases/auth/email_sign_up_usecase.dart';
@@ -31,6 +32,10 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     on<AuthCheckRequested>((event, emit) => _onAuthCheckRequested(event, emit));
   }
 
+  UserEntity? user;
+
+  UserEntity? get getUser => user;
+
   Future<void> _onEmailSignInEvent(
     EmailSignInEvent event,
     Emitter<AuthBlocState> emit,
@@ -47,6 +52,7 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
         emit(AuthErrorState(message: failure.message));
       },
       (userEntity) {
+        user = userEntity;
         log(userEntity.email);
         emit(AuthenticatedState(userEntity: userEntity));
       },
@@ -67,12 +73,11 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     result.fold(
       (failure) {
         log(failure.message);
-
         emit(AuthErrorState(message: failure.message));
       },
       (userEntity) {
         log(userEntity.email);
-
+        user = userEntity;
         emit(AuthenticatedState(userEntity: userEntity));
       },
     );
@@ -90,6 +95,7 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
         emit(AuthErrorState(message: failure.message));
       },
       (userEntity) {
+        user = userEntity;
         emit(AuthenticatedState(userEntity: userEntity));
       },
     );
@@ -99,9 +105,11 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     AuthCheckRequested event,
     Emitter<AuthBlocState> emit,
   ) async {
-    final user = authRepository.getCurrentUser();
-    if (user != null) {
-      emit(AuthenticatedState(userEntity: user));
+    final currentUser = authRepository.getCurrentUser();
+
+    if (currentUser != null) {
+      user = currentUser;
+      emit(AuthenticatedState(userEntity: currentUser));
     } else {
       emit(UnAuthenticatedState());
     }
@@ -110,8 +118,14 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
   Future<void> _onLogOut(LogOutEvent event, Emitter<AuthBlocState> emit) async {
     emit(AuthLoadingState());
     final result = await logOutUsecase.call(param: NoParam());
-    result.fold((failure) {
-      emit(AuthErrorState(message: failure.message));
-    }, (_) => emit(UnAuthenticatedState()));
+    result.fold(
+      (failure) {
+        emit(AuthErrorState(message: failure.message));
+      },
+      (_) {
+        user = null;
+        emit(UnAuthenticatedState());
+      },
+    );
   }
 }

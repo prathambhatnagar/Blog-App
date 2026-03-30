@@ -65,7 +65,6 @@ class _BlogScreenState extends State<BlogScreen> {
           builder: (context, state) {
             if (state.status == BlogStatus.initial ||
                 (state.status == BlogStatus.loading && state.blogs.isEmpty)) {
-              log('showing Loader');
               return const Loader();
             } else if (state.errorMessage != null && state.blogs.isEmpty) {
               return ErrorTile(error: state.errorMessage);

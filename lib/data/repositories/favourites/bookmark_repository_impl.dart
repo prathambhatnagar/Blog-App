@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:blog_assignment/core/failure/failure.dart';
 import 'package:blog_assignment/data/services/blog/local_favourite_blog_service.dart';
 import 'package:blog_assignment/domain/entities/blog/blog_entity.dart';
@@ -6,7 +8,7 @@ import 'package:dartz/dartz.dart';
 
 class BookmarkRepositoryImpl implements BookmarkRepository {
   final LocalFavoriteBlogService localFavoriteBlogService;
-  BookmarkRepositoryImpl(this.localFavoriteBlogService);
+  BookmarkRepositoryImpl({required this.localFavoriteBlogService});
 
   @override
   Future<Either<Failure, void>> add(BlogEntity blog) async {
@@ -31,6 +33,7 @@ class BookmarkRepositoryImpl implements BookmarkRepository {
     try {
       return Right(localFavoriteBlogService.getBookmarks());
     } catch (e) {
+      log(e.toString());
       return Left(DataBaseFailure());
     }
   }

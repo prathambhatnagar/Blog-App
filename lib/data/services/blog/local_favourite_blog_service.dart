@@ -10,21 +10,20 @@ abstract class LocalFavoriteBlogService {
 class LocalFavoriteBlogServiceImpl implements LocalFavoriteBlogService {
   static const String boxName = 'favorite_blogs';
 
+  Box<BlogEntity> get _box => Hive.box<BlogEntity>(boxName);
+
   @override
   Future<void> addBookmark(BlogEntity blog) async {
-    final box = Hive.box<BlogEntity>(boxName);
-    await box.put(blog.id, blog);
+    await _box.put(blog.id, blog);
   }
 
   @override
   Future<void> removeBookmark(int id) async {
-    final box = Hive.box<BlogEntity>(boxName);
-    await box.delete(id);
+    await _box.delete(id);
   }
 
   @override
   List<BlogEntity> getBookmarks() {
-    final box = Hive.box<BlogEntity>(boxName);
-    return box.values.toList();
+    return _box.values.toList();
   }
 }
