@@ -31,6 +31,6 @@ class ServerFailure extends Failure {
 
 class DataBaseFailure extends Failure {
   const DataBaseFailure([
-    super.message = "Failed to retrive data from Data base.",
+    super.message = "Failed to retrive data from Database.",
   ]);
 }

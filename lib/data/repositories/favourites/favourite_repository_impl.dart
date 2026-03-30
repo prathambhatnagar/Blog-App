@@ -1,7 +1,7 @@
 import 'package:blog_assignment/core/failure/failure.dart';
 import 'package:blog_assignment/data/services/blog/local_favourite_blog_service.dart';
 import 'package:blog_assignment/domain/entities/blog/blog_entity.dart';
-import 'package:blog_assignment/domain/repositories/favourite_blog/favourite_blog_repository.dart';
+import 'package:blog_assignment/domain/repositories/bookmark_blog/bookmark_blog_repository.dart';
 import 'package:dartz/dartz.dart';
 
 class BookmarkRepositoryImpl implements BookmarkRepository {
