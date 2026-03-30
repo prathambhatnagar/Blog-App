@@ -1,13 +1,30 @@
-abstract class Failure {}
+import 'package:equatable/equatable.dart';
 
-class ServerFailure extends Failure {}
+abstract class Failure extends Equatable {
+  final String message;
+  const Failure(this.message);
 
-// class ServerFailure extends Failure {}
+  @override
+  List<Object> get props => [message];
+}
 
-// class ServerFailure extends Failure {}
+// Auth  Failures
+class InvalidCredentialsFailure extends Failure {
+  const InvalidCredentialsFailure() : super("Invalid email or password.");
+}
 
-// class ServerFailure extends Failure {}
+class EmailAlreadyInUseFailure extends Failure {
+  const EmailAlreadyInUseFailure() : super("This email is already registered.");
+}
 
-// class ServerFailure extends Failure {}
+class WeakPasswordFailure extends Failure {
+  const WeakPasswordFailure() : super("The password provided is too weak.");
+}
 
-// class ServerFailure extends Failure {}
+class NetworkFailure extends Failure {
+  const NetworkFailure() : super("No internet connection detected.");
+}
+
+class ServerFailure extends Failure {
+  const ServerFailure([super.message = "Internal server error."]);
+}
