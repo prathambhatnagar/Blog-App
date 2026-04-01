@@ -71,14 +71,9 @@ class MyApp extends StatelessWidget {
           builder: (context, state) {
             if (state is AuthenticatedState) {
               return const BlogScreen();
-            } else if (state is UnAuthenticatedState ||
-                state is AuthErrorState) {
+            } else {
               return const SignInPage();
             }
-            // Show this while checking the session
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
           },
         ),
       ),

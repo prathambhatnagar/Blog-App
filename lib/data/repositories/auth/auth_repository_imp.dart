@@ -1,16 +1,20 @@
-import 'dart:developer';
-
 import 'package:blog_assignment/core/failure/failure.dart';
 import 'package:blog_assignment/data/models/auth/user_model.dart';
 import 'package:blog_assignment/data/services/auth/firebase_auth_service.dart';
+import 'package:blog_assignment/data/services/auth/firestore_user_info_service.dart';
 import 'package:blog_assignment/domain/entities/auth/user_entity.dart';
 import 'package:blog_assignment/domain/repositories/auth/auth_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthRepositoryImp extends AuthRepository {
-  AuthRepositoryImp({required this.firebaseAuthService});
+  AuthRepositoryImp({
+    required this.firebaseAuthService,
+    required this.firestoreUserInfoService,
+  });
+
   FirebaseAuthService firebaseAuthService;
+  FirestoreUserInfoService firestoreUserInfoService;
 
   @override
   Future<Either<Failure, UserEntity>> signIn({
@@ -22,7 +26,12 @@ class AuthRepositoryImp extends AuthRepository {
         email: email,
         password: password,
       );
-      return right(userModel.toUserEntity());
+
+      final user = await firestoreUserInfoService.getUserInfo(
+        uid: userModel.uid,
+      );
+
+      return right(user.toUserEntity());
     } on FirebaseAuthException catch (e) {
       switch (e.toString()) {
         case 'user-not-found':
@@ -42,14 +51,24 @@ class AuthRepositoryImp extends AuthRepository {
     required String email,
     required String password,
   }) async {
-    log('SignUP');
     try {
       final userModel = await firebaseAuthService.signUp(
         email: email,
         password: password,
       );
 
-      return Right(userModel.toUserEntity());
+      await firestoreUserInfoService.saveUserInfo(
+        uid: userModel.uid,
+        name: userModel.displayName!,
+        email: userModel.email,
+        phone: userModel.phone!,
+      );
+
+      final user = await firestoreUserInfoService.getUserInfo(
+        uid: userModel.uid,
+      );
+
+      return Right(user.toUserEntity());
     } catch (e) {
       switch (e.toString()) {
         case 'email-already-in-use':

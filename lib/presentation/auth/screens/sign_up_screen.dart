@@ -1,5 +1,7 @@
+import 'package:blog_assignment/core/widgets/loader.dart';
 import 'package:blog_assignment/presentation/auth/bloc/auth_bloc.dart';
 import 'package:blog_assignment/presentation/auth/bloc/auth_bloc_event.dart';
+import 'package:blog_assignment/presentation/auth/bloc/auth_bloc_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -198,22 +200,26 @@ class _SignUpPageState extends State<SignUpPage> {
                   const SizedBox(height: 30),
 
                   // Sign Up Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: _submit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                  BlocConsumer<AuthBloc, AuthBlocState>(
+                    listener: (context, state) {},
+                    builder: (context, state) {
+                      return SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: _submit,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: (state is AuthLoadingState)
+                              ? Loader()
+                              : Text("Sign Up", style: TextStyle(fontSize: 16)),
                         ),
-                      ),
-                      child: const Text(
-                        "Sign Up",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
+                      );
+                    },
                   ),
 
                   const SizedBox(height: 20),

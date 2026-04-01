@@ -40,8 +40,8 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     EmailSignInEvent event,
     Emitter<AuthBlocState> emit,
   ) async {
-    log('Sign in Event thown');
     emit(AuthLoadingState());
+
     final result = await emailSignInUsecase.call(
       param: SignInParam(email: event.email, password: event.password),
     );
@@ -51,6 +51,7 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
         log(failure.message);
         emit(AuthErrorState(message: failure.message));
       },
+
       (userEntity) {
         user = userEntity;
         log(userEntity.email);
@@ -64,8 +65,8 @@ class AuthBloc extends Bloc<AuthBlocEvent, AuthBlocState> {
     Emitter<AuthBlocState> emit,
   ) async {
     log('SignUp Event thown');
-
     emit(AuthLoadingState());
+
     final result = await emailSignUpUsecase.call(
       param: SignUpParam(email: event.email, password: event.password),
     );
