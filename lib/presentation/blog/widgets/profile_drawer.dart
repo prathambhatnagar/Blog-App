@@ -17,9 +17,11 @@ class ProfileDrawer extends StatelessWidget {
           UserAccountsDrawerHeader(
             currentAccountPicture: CircleAvatar(
               backgroundColor: Colors.white,
-              child: Icon(Icons.person, size: 40, color: Colors.blue),
+              child: userEntity?.profileUrl != null
+                  ? Image.asset(userEntity!.profileUrl!)
+                  : Icon(Icons.person, size: 40, color: Colors.blue),
             ),
-            accountName: Text(''),
+            accountName: Text(userEntity?.displayName ?? 'no name'),
             accountEmail: Text(userEntity!.email),
             decoration: BoxDecoration(color: Colors.blue),
           ),

@@ -6,12 +6,14 @@ class UserModel {
     required this.email,
     this.displayName,
     this.profileUrl,
+    this.phone,
   });
 
   String uid;
   String email;
   String? displayName;
   String? profileUrl;
+  String? phone;
 }
 
 extension UserModelx on UserModel {
@@ -21,6 +23,7 @@ extension UserModelx on UserModel {
       email: email,
       displayName: displayName,
       profileUrl: profileUrl,
+      phone: phone,
     );
   }
 }

@@ -1,5 +1,7 @@
+import 'package:blog_assignment/core/widgets/loader.dart';
 import 'package:blog_assignment/presentation/auth/bloc/auth_bloc.dart';
 import 'package:blog_assignment/presentation/auth/bloc/auth_bloc_event.dart';
+import 'package:blog_assignment/presentation/auth/bloc/auth_bloc_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,6 +20,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -28,6 +31,8 @@ class _SignUpPageState extends State<SignUpPage> {
         EmailSignUpEvent(
           email: _emailController.text,
           password: _confirmPasswordController.text,
+          name: _nameController.text,
+          phone: _phoneController.text,
         ),
       );
     }
@@ -52,6 +57,22 @@ class _SignUpPageState extends State<SignUpPage> {
 
     if (!emailRegex.hasMatch(value)) {
       return "Enter a valid email";
+    }
+
+    return null;
+  }
+
+  String? _validatePhone(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Phone Number is required";
+    }
+
+    if (value.length != 10) {
+      return "Phone number must be exactly 10 digits";
+    }
+
+    if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+      return "Phone number must contain only digits";
     }
 
     return null;
@@ -141,6 +162,22 @@ class _SignUpPageState extends State<SignUpPage> {
 
                   const SizedBox(height: 20),
 
+                  // Phone Field
+                  TextFormField(
+                    controller: _phoneController,
+                    validator: _validatePhone,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: "Phone Number",
+                      prefixIcon: const Icon(Icons.phone),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
                   // Password
                   TextFormField(
                     controller: _passwordController,
@@ -198,22 +235,48 @@ class _SignUpPageState extends State<SignUpPage> {
                   const SizedBox(height: 30),
 
                   // Sign Up Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: _submit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                  BlocConsumer<AuthBloc, AuthBlocState>(
+                    listener: (context, state) => {
+                      if (state is AuthErrorState)
+                        {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(state.message)),
+                          ),
+                        },
+
+                      if (state is AuthenticatedState)
+                        {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.userEntity.email),
+                              backgroundColor: Colors.green,
+                            ),
+                          ),
+                        },
+                    },
+
+                    builder: (context, state) {
+                      if (state is AuthLoadingState) {
+                        return Loader();
+                      }
+                      return SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: _submit,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text(
+                            "Sign Up",
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
-                      ),
-                      child: const Text(
-                        "Sign Up",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
+                      );
+                    },
                   ),
 
                   const SizedBox(height: 20),

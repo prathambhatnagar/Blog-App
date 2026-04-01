@@ -2,6 +2,7 @@ import 'package:blog_assignment/data/repositories/auth/auth_repository_imp.dart'
 import 'package:blog_assignment/data/repositories/blog/blog_repository_impl.dart';
 import 'package:blog_assignment/data/repositories/favourites/bookmark_repository_impl.dart';
 import 'package:blog_assignment/data/services/auth/firebase_auth_service.dart';
+import 'package:blog_assignment/data/services/auth/firestore_user_info_service.dart';
 import 'package:blog_assignment/data/services/blog/blog_service.dart';
 import 'package:blog_assignment/data/services/blog/local_favourite_blog_service.dart';
 import 'package:blog_assignment/domain/repositories/auth/auth_repository.dart';
@@ -48,9 +49,14 @@ void initServiceLocator() async {
     FirebaseAuthServiceImpl(),
   );
 
+  serviceLocator.registerSingleton<FirestoreUserInfoService>(
+    FirestoreUserInfoServiceImpl(),
+  );
+
   serviceLocator.registerSingleton<AuthRepository>(
     AuthRepositoryImp(
       firebaseAuthService: serviceLocator<FirebaseAuthService>(),
+      firestoreUserInfoService: serviceLocator<FirestoreUserInfoService>(),
     ),
   );
 
@@ -69,6 +75,7 @@ void initServiceLocator() async {
   serviceLocator.registerSingleton<LogOutUsecase>(
     LogOutUsecase(authRepository: serviceLocator<AuthRepository>()),
   );
+
   // Bookmark locators
   serviceLocator.registerSingleton<LocalFavoriteBlogService>(
     LocalFavoriteBlogServiceImpl(),

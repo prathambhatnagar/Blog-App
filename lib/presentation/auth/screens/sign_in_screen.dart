@@ -100,7 +100,7 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
 
                 // Password Field
                 TextFormField(

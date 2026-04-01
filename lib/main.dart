@@ -24,11 +24,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await Firebase.initializeApp();
   await Hive.initFlutter();
   Hive.registerAdapter(BlogEntityAdapter());
   await Hive.openBox<BlogEntity>('favorite_blogs');
-  await Firebase.initializeApp();
   initServiceLocator();
   runApp(MyApp());
 }
@@ -71,14 +70,9 @@ class MyApp extends StatelessWidget {
           builder: (context, state) {
             if (state is AuthenticatedState) {
               return const BlogScreen();
-            } else if (state is UnAuthenticatedState ||
-                state is AuthErrorState) {
+            } else {
               return const SignInPage();
             }
-            // Show this while checking the session
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
           },
         ),
       ),

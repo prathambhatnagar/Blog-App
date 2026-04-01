@@ -10,12 +10,24 @@ class EmailSignUpUsecase extends Usecase<UserEntity, SignUpParam> {
 
   @override
   Future<Either<Failure, UserEntity>> call({required SignUpParam param}) async {
-    return authRepository.signUp(email: param.email, password: param.password);
+    return authRepository.signUp(
+      email: param.email,
+      password: param.password,
+      name: param.name,
+      phone: param.phone,
+    );
   }
 }
 
 class SignUpParam {
-  SignUpParam({required this.email, required this.password});
+  SignUpParam({
+    required this.email,
+    required this.password,
+    required this.name,
+    required this.phone,
+  });
   String email;
   String password;
+  String name;
+  String phone;
 }

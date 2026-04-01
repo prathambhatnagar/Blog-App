@@ -3,7 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 abstract class FirebaseAuthService {
-  Future<UserModel> signUp({required String email, required String password});
+  Future<UserModel> signUp({
+    required String email,
+    required String password,
+    required String name,
+    required String phone,
+  });
   Future<UserModel> signIn({required String email, required String password});
   Future<UserModel> googleSignIn();
   Future<void> logOut();
@@ -37,6 +42,8 @@ class FirebaseAuthServiceImpl extends FirebaseAuthService {
   Future<UserModel> signUp({
     required String email,
     required String password,
+    required String name,
+    required String phone,
   }) async {
     UserCredential userCredential = await _firebase
         .createUserWithEmailAndPassword(email: email, password: password);
@@ -44,13 +51,16 @@ class FirebaseAuthServiceImpl extends FirebaseAuthService {
     // if (!userCredential.user!.emailVerified) {
     //   userCredential.user!.sendEmailVerification();
     // }
+    await _firebase.currentUser!.updateDisplayName(name);
 
     final user = userCredential.user!;
+
     return UserModel(
       uid: user.uid,
       email: user.email!,
       profileUrl: user.photoURL,
       displayName: user.displayName,
+      phone: phone,
     );
   }
 
